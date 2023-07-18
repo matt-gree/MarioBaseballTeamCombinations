@@ -1,3 +1,5 @@
+import math
+
 char_name_dup_list = [
     "Mario",
     "Luigi",
@@ -60,7 +62,6 @@ char_name_dup_dict = {
     "Dry Bones": ["Dry Bones(Gy)", "Dry Bones(G)", "Dry Bones(B)", "Dry Bones(R)",]
 }
 import time
-import csv
 
 start = time.perf_counter()
 def combination(n, n_list):
@@ -93,7 +94,8 @@ def count_valid_teams():
         team_with_duplicates = set(team)  # Create a set for the team
 
         # Check if the team has at least one captain character
-        if sum(captain in captain_list for captain in team_with_duplicates) < 2:
+        num_captains = sum(captain in captain_list for captain in team_with_duplicates)
+        if num_captains < 2:
             continue
 
         base_teams = [team_with_duplicates]  # List to store base teams
@@ -115,14 +117,18 @@ def count_valid_teams():
                 base_teams.extend(duplicate_teams)  # Extend the list with teams including duplicates
                 base_teams = base_teams[duplicates_appended:]
 
-        different_teams_in_base_teams = 0
-        for team in base_teams:
-            for captain in captain_list:
-                if captain in team:
-                    different_teams_in_base_teams += 1
+        for characters_set in base_teams:
+            for team in combination(9, characters_set):
+                half_num_captains = sum(captain in captain_list for captain in characters_set)
+                if half_num_captains == 0:
+                    continue
+                running_total += half_num_captains * (num_captains)
+
+
         team_count += 1
         print(team_count)
-        running_total += different_teams_in_base_teams
+        print(running_total)
+        #running_total += len(base_teams)*math.factorial(num_captains)
 
     return running_total
 
